@@ -60,7 +60,7 @@ int main() {
     for (int i = 0; i < body_len; i++) {
         printf("%i: [%d, %d]\n", i, snake_body[i][0], snake_body[i][1]);
     }
-    printf("%i in %d\n", body_len, body_len * sizeof(snake_body)/sizeof(int));
+    printf("%i in %d int memspaces\n", body_len, body_len * sizeof(snake_body)/sizeof(int));
 }
 
 // Embedded function definitions
