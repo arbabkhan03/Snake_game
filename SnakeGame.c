@@ -30,18 +30,18 @@ int cmd; // Records user input (Only changes from proper input)
 // Pause is unimplemented and may never be depends if you want it
 
 // Embedded function decleration
-void initGame();
-    void initArray();
-    int* random_pos();
-void initGameLogic();
-    int move_snake_head(int direction);
-    void move_snake(int* head_pos);
-    void foodLogic();
-void AddGameObjects();
-void printArray();
-void reset_map();
-void append_element(int* new_element, int append_pos);
-void input();
+void initGame(); // Initializes the game
+    void initArray(); // Function that populates the array with it's placeholder chars
+    int* random_pos(); // Function that returns a random position within the array
+void initGameLogic(); // Initializes the games background logic
+    int move_snake_head(int direction); // Code for head movement
+    void move_snake(int* new_head_pos); // Code for body movement (including head)
+    void foodLogic(); // The logic that places the food while ensuring it does not get placed in anything else and what happens when eaten
+void AddGameObjects(); // Adds snake body to array for print (food will be inlucded later)
+void printArray(); // Function that prints the array out in the console
+void reset_map(); // Removes all previous display elements for the snake and food (Uniplemented food may not be needed since it dosent move)
+void append_element(int* new_element, int append_pos); // Function that appends the value entered to the body array in a [row, col] format
+void input(); // Records user input (Uniplemented as of yet)
 
 // Main loop
 int main() {
@@ -61,15 +61,15 @@ int main() {
     AddGameObjects();
     printArray();
 
-    while (game_run == true && cmd != 'q') {
-        if (_kbhit()) {
+    while (game_run == true && cmd != 'q') { // Main logic loop for the game
+        if (_kbhit()) { // User input loop
             input();
         }
     }
 }
 
 // Embedded function definitions
-void initGame() {
+void initGame() { // Initializes the game
     initArray();
     append_element(random_pos(), 0); // Sets the head position
 }
@@ -121,7 +121,7 @@ void move_snake(int* new_head_pos) { // Code for body movement (including head)
 
 }
 
-void foodLogic() { // Logic for the food
+void foodLogic() { // The logic that places the food while ensuring it does not get placed in anything else and what happens when eaten
 
 }
 
@@ -175,7 +175,7 @@ void append_element(int* append_element, int append_pos) { // Function that appe
     snake_body[append_pos][1] = append_element[1]; // Sets the value of the second element
 }
 
-void input() { // Records user input ()Uniplemented as of yet
+void input() { // Records user input (Uniplemented as of yet)
 
     int pressedKey = getch(); // Fetches the pressed keys' value
 
