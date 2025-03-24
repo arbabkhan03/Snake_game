@@ -99,7 +99,9 @@ void initGameLogic() {
 }
 
 int move_snake_head(int direction) { // Code for head movement
+
     int* head_pos = snake_body[0];
+
     switch(direction) {
         case UP:
 
@@ -114,11 +116,25 @@ int move_snake_head(int direction) { // Code for head movement
 
             break;
     }
-    return 0;
+    return head_pos; // Return the new position after going through the logic contained in the case-break (Needs to be able to loop like in the marquis assingment)
 }
 
-void move_snake(int* new_head_pos) { // Code for body movement (including head)
+void move_snake(int* new_head_pos) { // Code for body movement (including head) Body will follow the head
 
+    // e.g. [0, 2], [0, 1], [0, 0] => [0, 3], [0, 2], [0, 1] (With a vertical movement head is the first space)
+
+    for (int i = body_len; i > 0; i--) { // Loops through the bidy array
+        switch(i) { // To differentiate the head from the rest of the body
+            case 0:
+                *snake_body[i] = *new_head_pos; // Sets the new head position to body segment 0
+                break;
+            default:
+                *snake_body[i] = *snake_body[i - 1]; // Sets the value of the later segment to the previous position
+                // May require a error hadeling to the AddGameObject function relating to empty positions if there are more than 1 body segments to fill
+                // e.g. if we have the snake start with more than 1 segment
+                break;
+        }
+    }
 }
 
 void foodLogic() { // The logic that places the food while ensuring it does not get placed in anything else and what happens when eaten
