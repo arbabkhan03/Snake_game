@@ -4,7 +4,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <time.h>
-//#include <conio.h>
+#include <stdbool.h>
+#include <conio.h> // Wont work on github
 
 // Defining constants
 #define row 6
@@ -23,52 +24,117 @@
 int game_map[row][col]; // The array is defined as a global variable to permit the functions to eddit it directly
 int (*snake_body)[2]; // The array that stores the snakes body as a series of cordinates
 int body_len = START_SIZE - 1; // Length of the snake at the start and will store that attribute for later use minus the head
+int food_pos[2]; // Buffer that hold the food position
+bool game_run = true; // Makes the game run and is the end condition for the main loop
+int cmd; // Records user input (Only changes from proper input)
+// Pause is unimplemented and may never be depends if you want it
 
 // Embedded function decleration
-void initArray();
+void initGame();
+    void initArray();
+    int* random_pos();
+void initGameLogic();
+    int move_snake_head(int direction);
+    void move_snake(int* head_pos);
+    void foodLogic();
+void AddGameObjects();
 void printArray();
-int* random_pos();
+void reset_map();
 void append_element(int* new_element, int append_pos);
+void input();
 
 // Main loop
 int main() {
-    srand((unsigned int)time(NULL)); // Random number generator initilisation (Seed init)
+    srand((unsigned int)time(NULL) + rand()); // Random number generator initilisation (Seed init)
     initArray();
 
-    //snake_body = (int*)malloc(2 * (body_len + 1) * sizeof(int));
     snake_body = calloc(START_SIZE, sizeof(*snake_body));
 
-    int* rand = random_pos();
-    game_map[rand[0]][rand[1]] = '#';
-    //printArray();
+    //int* rand = random_pos();
+    //game_map[rand[0]][rand[1]] = '#';
+    
     //printf("%i, %i\n", rand[0], rand[1]);
-    free(rand);
-    append_element(random_pos(), 0);
-    append_element(random_pos(), 1);
-    append_element(random_pos(), 2);
-    append_element(random_pos(), 3);
-    append_element(random_pos(), 4);
-    append_element(random_pos(), 5);
-    append_element(random_pos(), 6);
-    append_element(random_pos(), 7);
-    append_element(random_pos(), 8);
-    append_element(random_pos(), 9);
-    append_element(random_pos(), 10);
-    append_element(random_pos(), 11);
-    append_element(random_pos(), 12);
-    append_element(random_pos(), 13);
-    for (int i = 0; i < body_len; i++) {
-        printf("%i: [%d, %d]\n", i, snake_body[i][0], snake_body[i][1]);
+    //free(rand);
+    //printf("%i in %d int memspaces\n", body_len, body_len * sizeof(snake_body)/sizeof(int));
+
+    initGame();
+    AddGameObjects();
+    printArray();
+
+    while (game_run == true && cmd != 'q') {
+        if (_kbhit()) {
+            input();
+        }
     }
-    printf("%i in %d int memspaces\n", body_len, body_len * sizeof(snake_body)/sizeof(int));
 }
 
 // Embedded function definitions
-void initArray() { // Function that populates the array with the pattern of 1's and 0's
+void initGame() {
+    initArray();
+    append_element(random_pos(), 0); // Sets the head position
+}
 
+void initArray() { // Function that populates the array with it's placeholder chars
     for (int i = 0; i < row; i++) { // Loops through each row
         for (int j = 0; j < col; j++) { // Loops through each column
             game_map[i][j] = ' ';
+        }
+    }
+}
+
+int* random_pos() { // Function that returns a random position within the array
+    int* pos = (int*)malloc(2 * sizeof(int)); // Allocates the memory used to store the [row, col] as 2 ints
+    if (pos == NULL) {
+        printf("Memory allocation failed!\n");
+        exit(1); // Exit the program if allocation fails
+    }
+    pos[0] = rand() % (row); // Sets the vertical position
+    pos[1] = rand() % (col); // Sets the horizontal position
+    return pos; // Formatted as [row, col]
+}
+
+void initGameLogic() {
+    move_snake(move_snake_head(cmd));
+    foodLogic();
+}
+
+int move_snake_head(int direction) { // Code for head movement
+    int* head_pos = snake_body[0];
+    switch(direction) {
+        case UP:
+
+            break;
+        case LEFT:
+
+            break;
+        case DOWN:
+
+            break;
+        case RIGHT:
+
+            break;
+    }
+    return 0;
+}
+
+void move_snake(int* new_head_pos) { // Code for body movement (including head)
+
+}
+
+void foodLogic() { // Logic for the food
+
+}
+
+void AddGameObjects() { // Adds snake body to array for print (food will be inlucded later)
+    for (int i = 0; i < body_len; i++) {
+        //printf("%i: [%d, %d]\n", i, snake_body[i][0], snake_body[i][1]);
+        switch (i) {
+            case 0: // The head must be distict
+                game_map[snake_body[i][0]][snake_body[i][1]] = '@';
+                break;
+            default: // The body of the snake
+                game_map[snake_body[i][0]][snake_body[i][1]] = '#';
+                break;
         }
     }
 }
@@ -92,15 +158,10 @@ void printArray() { // Function that prints the array out in the console
     printf("\n");
 }
 
-int* random_pos() { // Function that returns a random position within the array
-    int* pos = (int*)malloc(2 * sizeof(int)); // Allocates the memory used to store the [row, col] as 2 ints
-    if (pos == NULL) {
-        printf("Memory allocation failed!\n");
-        exit(1); // Exit the program if allocation fails
+void reset_map() { // Removes all previous display elements for the snake and food
+    for (int i = 0; i < body_len; i++) {
+        game_map[snake_body[i][0]][snake_body[i][1]] = ' ';
     }
-    pos[0] = rand() % (row); // Sets the vertical position
-    pos[1] = rand() % (col); // Sets the horizontal position
-    return pos; // Formated as [row, col]
 }
 
 void append_element(int* append_element, int append_pos) { // Function that appends the value entered to the body array in a [row, col] format
@@ -112,4 +173,14 @@ void append_element(int* append_element, int append_pos) { // Function that appe
 
     snake_body[append_pos][0] = append_element[0]; // Sets the value of the first element
     snake_body[append_pos][1] = append_element[1]; // Sets the value of the second element
+}
+
+void input() { // Records user input ()Uniplemented as of yet
+
+    int pressedKey = getch(); // Fetches the pressed keys' value
+
+    if (pressedKey == UP || pressedKey == LEFT || pressedKey == DOWN || pressedKey == RIGHT || pressedKey == PAUSE || pressedKey == QUIT) { // Checks if the entered key is assigned to a command
+        cmd = pressedKey;
+        printf("%c", cmd);
+    }
 }
