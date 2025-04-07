@@ -34,7 +34,7 @@ void initGame(); // Initializes the game
     void initArray(); // Function that populates the array with it's placeholder chars
     int* random_pos(); // Function that returns a random position within the array
 void initGameLogic(); // Initializes the games background logic
-    int move_snake_head(int direction); // Code for head movement
+    int* move_snake_head(int direction); // Code for head movement
     void move_snake(int* new_head_pos); // Code for body movement (including head)
     void foodLogic(); // The logic that places the food while ensuring it does not get placed in anything else and what happens when eaten
 void AddGameObjects(); // Adds snake body to array for print (food will be inlucded later)
@@ -60,10 +60,15 @@ int main() {
     initGame();
     AddGameObjects();
     printArray();
+    reset_map();
 
     while (game_run == true && cmd != 'q') { // Main logic loop for the game
         if (_kbhit()) { // User input loop
             input();
+            initGameLogic();
+            AddGameObjects();
+            printArray();
+            reset_map();
         }
     }
 }
@@ -72,6 +77,9 @@ int main() {
 void initGame() { // Initializes the game
     initArray();
     append_element(random_pos(), 0); // Sets the head position
+    append_element(random_pos(), body_len);
+    append_element(random_pos(), body_len);
+    append_element(random_pos(), body_len);
 }
 
 void initArray() { // Function that populates the array with it's placeholder chars
@@ -95,18 +103,14 @@ int* random_pos() { // Function that returns a random position within the array
 
 void initGameLogic() {
     move_snake(move_snake_head(cmd));
-    foodLogic();
+    //foodLogic();
 }
 
-// Function to calculate the new position of the snake's head based on the current direction
-/*
-    Arbab code here for snake head movement.
-
-*/
 int* move_snake_head(int direction) 
 {
+    printf("I AM ALIVE: %c", direction);
     // Allocate memory to store the new head position as [row, col]
-    int* new_head_pos = malloc(2 * sizeof(int));
+    int* new_head_pos = (int*)malloc(2 * sizeof(int));
     if (new_head_pos == NULL) 
     {
         printf("Memory allocation failed!\n");
@@ -114,44 +118,57 @@ int* move_snake_head(int direction)
     }
 
     // Start by copying the current head position
-    new_head_pos[0] = snake_body[0][0]; // row
-    new_head_pos[1] = snake_body[0][1]; // col
-
+    printf("|%d|", new_head_pos[0]);
+    printf("|%d|\n", new_head_pos[1]);
     // Update the position based on the direction input
     switch(direction) {
         case UP:
             // Move one row up, wrap around if it goes out of bounds
-            new_head_pos[0] = (new_head_pos[0] - 1 + row) % row;
+            new_head_pos[0] = ((snake_body[0][0] - 1) + row) % row;
+            new_head_pos[1] = snake_body[0][1];
             break;
         case DOWN:
             // Move one row down, wrap around if it goes out of bounds
-            new_head_pos[0] = (new_head_pos[0] + 1) % row;
+            new_head_pos[0] = (snake_body[0][0] + 1) % row;
+            new_head_pos[1] = snake_body[0][1];
             break;
         case LEFT:
             // Move one column left, wrap around if it goes out of bounds
-            new_head_pos[1] = (new_head_pos[1] - 1 + col) % col;
+            new_head_pos[0] = snake_body[0][0];
+            new_head_pos[1] = ((snake_body[0][1] - 1) + col) % col;
             break;
         case RIGHT:
             // Move one column right, wrap around if it goes out of bounds
-            new_head_pos[1] = (new_head_pos[1] + 1) % col;
+            new_head_pos[0] = snake_body[0][0];
+            new_head_pos[1] = (snake_body[0][1] + 1) % col;
             break;
     }
 
-    // Return the newly calculated position of the head
+    printf("|%d|", new_head_pos[0]);
+    printf("|%d|\n", new_head_pos[1]);
+
     return new_head_pos;
+
 }
 
 void move_snake(int* new_head_pos) { // Code for body movement (including head) Body will follow the head
 
+    printf("I DO SOMETHING\n");
     // e.g. [0, 2], [0, 1], [0, 0] => [0, 3], [0, 2], [0, 1] (With a vertical movement head is the first space)
 
-    for (int i = body_len; i > 0; i--) { // Loops through the bidy array
+    for (int i = body_len - 1; i > -1; i--) { // Loops through the bidy array
         switch(i) { // To differentiate the head from the rest of the body
             case 0:
-                *snake_body[i] = *new_head_pos; // Sets the new head position to body segment 0
+                printf("\n|%d, %d|!", snake_body[0][0], snake_body[0][1]);
+                snake_body[0][0] = new_head_pos[0]; // Sets the new head position to body segment 0
+                snake_body[0][1] = new_head_pos[1]; // Sets the new head position to body segment 0
+                printf("\n|%d, %d|!", snake_body[0][0], snake_body[0][1]);
                 break;
             default:
-                *snake_body[i] = *snake_body[i - 1]; // Sets the value of the later segment to the previous position
+                printf("\n|%d, %d|: %i", snake_body[i][0], snake_body[i][1], i);
+                snake_body[i][0] = snake_body[i - 1][0]; // Sets the value of the later segment to the previous position
+                snake_body[i][1] = snake_body[i - 1][1]; // Sets the value of the later segment to the previous position
+                printf("\n|%d, %d|: %i", snake_body[i][0], snake_body[i][1], i);
                 // May require a error hadeling to the AddGameObject function relating to empty positions if there are more than 1 body segments to fill
                 // e.g. if we have the snake start with more than 1 segment
                 break;
@@ -164,7 +181,7 @@ void foodLogic() { // The logic that places the food while ensuring it does not 
 }
 
 void AddGameObjects() { // Adds snake body to array for print (food will be inlucded later)
-    for (int i = 0; i < body_len; i++) {
+    for (int i = body_len - 1; i > -1; i--) {
         //printf("%i: [%d, %d]\n", i, snake_body[i][0], snake_body[i][1]);
         switch (i) {
             case 0: // The head must be distict
