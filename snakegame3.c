@@ -214,6 +214,8 @@ void move_snake(int* new_head_pos)
 
 
 void AddGameObjects() { // Adds snake body to array for print (food will be inlucded later)
+
+    game_map[food_pos[0]][food_pos[1]] = '&'; // The food
     for (int i = body_len - 1; i > -1; i--) {
         //printf("%i: [%d, %d]\n", i, snake_body[i][0], snake_body[i][1]);
         switch (i) {
@@ -253,8 +255,8 @@ void reset_map() { // Removes all previous display elements for the snake and fo
     for (int i = 0; i < body_len; i++) 
     {
         game_map[snake_body[i][0]][snake_body[i][1]] = ' ';
-
     }
+    game_map[food_pos[0]][food_pos[1]] = ' ';
 }
 
 void append_element(int* append_element, int append_pos) { // Function that appends the value entered to the body array in a [row, col] format
