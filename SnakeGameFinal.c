@@ -11,9 +11,9 @@
 // Defining constants
 #define row 6
 #define col 24
-#define START_SIZE 10
+#define START_SIZE 1
 
-// Speed settings
+// Speed settings (Smaller = Faster)
 #define DEFAULT_SPEED 200 // milliseconds
 #define MAX_SPEED 100 // milliseconds
 
@@ -28,13 +28,13 @@
 // Global variables
 int game_map[row][col]; // The array is defined as a global variable to permit the functions to eddit it directly
 int (*snake_body)[2]; // The array that stores the snakes body as a series of cordinates
-int body_len = START_SIZE - 1; // Length of the snake at the start and will store that attribute for later use minus the head
+int body_len = START_SIZE - 1; // Length of the snake at the start and will store that value for later use
 int food_pos[2]; // Bufferss that hold the food position
 bool game_run = true; // Makes the game run and is the end condition for the main loop
 int cmd[2] = {PAUSE, RIGHT}; // Records user input (Only changes from proper input)
-int pauseSymbol[16][2]; // The position of the pause symbol components that is based on the map dimetions
-int current_speed = DEFAULT_SPEED; // this should be outside of your functions if global
-bool speed_toggle = false; // false = normal, true = fast
+int pauseSymbol[16][2]; // The stores the coordinates of the pause symbol components calculated based on map dimetions
+int current_speed = DEFAULT_SPEED; // Sets the delay between code repetitions smaller value = faster
+bool speed_toggle = false; // false = DEFAULT_SPEED || true = MAX_SPEED
 
 // Embedded function decleration
 void menu(); // Function that prints and handles the menu logic
@@ -49,34 +49,34 @@ void initGameLogic(); // Initializes the games background logic
     void foodLogic(); // The logic that places the food while ensuring it does not get placed in anything else and what happens when eaten
         bool placeFood(); // Code that places the food on the map
 void initDisplay(); // Initializes the displaying of the game
-    void AddGameObjects(); // Adds snake body to array for print (food will be inlucded later)
+    void AddGameObjects(); // Adds snake body and food to array for print
     void printArray(); // Function that prints the array out in the console
     void reset_map(); // Removes all previous display elements for the snake and food (Uniplemented food may not be needed since it dosent move)
 
 int* random_pos(); // Function that returns a random position within the array
 void append_element(int* new_element, int append_pos); // Function that appends the value entered to the body array in a [row, col] format
-void input(); // Records user input (Uniplemented as of yet)
+void input(); // Records user input
 void statusPrint(); // Displays the pause icon
 void resetGame(); // Resets all the important variables to their default values
 
 // Main loop
 int main() {
 
-main_menu: // Restart the the code from the begining if 'm' is pressed
+main_menu: // Restart the the code from the begining if 'm' is pressed (during game end)
 
     menu(); // Function that prints and handles the menu logic
 
-restart_game: // Restart the the game with the same settings if 'r' is pressed
+restart_game: // Restart the the game with the same settings if 'r' is pressed (during game end)
 
     initGame(); // Initializes the game
 
     while (game_run == true) { // Main logic loop for the game
-        input();
-        if (cmd[0] != PAUSE && game_run) {
-            initGameLogic();
-            if (game_run) {
-                initDisplay();
-                Sleep(current_speed);
+        input(); // User input
+        if (cmd[0] != PAUSE && game_run) { // Only to run if game_run is true and the game is not paused
+            initGameLogic(); // Games logic
+            if (game_run) { // If the game ends durring initGameLogic() it will imediatly end the game
+                initDisplay(); // All the display functions and logic
+                Sleep(current_speed); // Delay for code repetition smaller value = faster
             }
         }
     }
@@ -84,16 +84,19 @@ restart_game: // Restart the the game with the same settings if 'r' is pressed
     printf("\nPress 'q' key to exit");
     printf("\nPress 'm' to go to main menu");
     printf("\nPress 'r' to restart game");
-    switch(getch()) {
+
+    switch(getch()) { // Reads user input for respective commands
         case 'm':
-            resetGame();
+            resetGame(); // Resets all the important variables to their default values
             goto main_menu; // Goes to start of main loop
             break;
         case 'r':
-            resetGame();
+            resetGame(); // Resets all the important variables to their default values
             goto restart_game; // Goes to after the menu function in main
             break;
-        case 'q':
+        case 'q': // Quits the game
+            printf("\n\nExiting game. Goodbye!");
+            Sleep(1000);
             return 0; // Closes the window
     }
 }
@@ -108,7 +111,7 @@ void menu() { // Function that prints and handles the menu logic
         printf("         WELCOME TO SNAKE GAME       \n");
         printf("=====================================\n");
         printf("1. Start Game\n");
-        printf("2. Instructions\n");
+        printf("2. Settings & Instructions\n");
         printf("3. Exit\n");
         printf("=====================================\n");
         printf("Enter your choice (1/2/3): ");
@@ -122,17 +125,17 @@ void menu() { // Function that prints and handles the menu logic
             case '2':
                 system("cls");
                 printf("============= INSTRUCTIONS =============\n");
+                printf("\nPress 'e' to return to main menu.\n");
                 printf("Use WASD keys to control the snake:\n");
                 printf("  W - Up\n");
                 printf("  A - Left\n");
                 printf("  S - Down\n");
-                printf("  D - Right\n\n");
-                printf("Eat '*' to grow. Don't hit yourself!\n");
-                printf("Press 'q' to quit the game.\n");
-                printf("Press 'e' to return to menu...\n");
-                printf("Press spacebar for pause\n");
-                printf("Press 'f' adjust your speed\n\n");
-                switch(speed_toggle) { // Prints correct option
+                printf("  D - Right\n");
+                printf("Press [spacebar] to pause & unpause the game.\n");
+                printf("Press 'q' to quit the game.\n\n");
+                printf("To win eat '*' to grow till you cover the map. Don't hit yourself!\n");
+                printf("Press 'f' adjust your speed setting\n\n");
+                switch(speed_toggle) { // Prints current setting
                     case true:
                         printf("\rCurrent Speed setting: [Max Speed]    ");
                         break;
@@ -147,6 +150,7 @@ void menu() { // Function that prints and handles the menu logic
                     if (_kbhit) {
                         key = getch();
                         if (key == 'f') { // Key is f to cause toggle
+                            // Prints current setting and changes the value of current speed
                             if (!speed_toggle) {
                                 printf("\rCurrent Speed setting: [Max Speed]    ");
                                 speed_toggle = true;
@@ -176,11 +180,11 @@ void menu() { // Function that prints and handles the menu logic
 
 void initGame() { // Initializes the game
     srand((unsigned int)time(NULL) + rand()); // Random number generator initilisation (Seed init)
-    initArray();
-    statusSetup();
+    initArray(); // Populates the array
+    statusSetup(); // Preps the pause symbol based on map size
     append_element(random_pos(), 0); // Sets the head position
-    placeFood();
-    initDisplay();
+    placeFood(); // Places food on the map
+    initDisplay(); // Dispalays the map
 }
  
 void initArray() { // Function that populates the array with it's placeholder chars
@@ -192,11 +196,13 @@ void initArray() { // Function that populates the array with it's placeholder ch
 }
 
 void statusSetup() { // Calculates the pause symbols position and save it
-    int center[2] = {(row / 2) - 1, (col / 2) - 1};
-    int count = 0;
+    int center[2] = {(row / 2) - 1, (col / 2) - 1}; // Locates the center of the map
+    int count = 0; // Counts the number of repetitions
+    // Places the pause symbols components in there respective coordinates from the center procedurally
     for (int i = -1; i < 3; i++) {
         for (int j = -2; j < 3; j++) {
             if (j != 0) {
+                // Saves the coordinates into the array
                 pauseSymbol[count][0] = center[0] + i;
                 pauseSymbol[count][1] = center[1] + j;
                 count++;
@@ -215,7 +221,7 @@ void initGameLogic() {
 
 void move_snake(int* new_head_pos) { // Code for body movement (including head) Body will follow the head
 
-    // e.g. [0, 2], [0, 1], [0, 0] => [0, 3], [0, 2], [0, 1] (With a vertical movement head is the first space)
+    // e.g. [0, 2], [0, 1], [0, 0] => [0, 3], [0, 2], [0, 1] (With a vertical movement head is the first space aka. 0)
  
     for (int i = body_len - 1; i > -1; i--) { // Loops through the bidy array
         switch(i) { // To differentiate the head from the rest of the body
@@ -228,6 +234,7 @@ void move_snake(int* new_head_pos) { // Code for body movement (including head) 
                 snake_body[i][1] = snake_body[i - 1][1]; // Sets the col value of the later segment to the previous position
                 // May require a error hadeling to the AddGameObject function relating to empty positions if there are more than 1 body segments to fill
                 // e.g. if we have the snake start with more than 1 segment
+                // Currently it initiates all the undefined segments to position [0, 0]
                 break;
         }
     }
@@ -271,26 +278,26 @@ bool checkCollision() { // Checks if the snake has colided with itself
     for (int i = 1; i < body_len; i++) {
         if (snake_body[0][0] == snake_body[i][0] && snake_body[0][1] == snake_body[i][1]) {
 
-            printf("\nGame Over! Final Score: %d\n", body_len - 1); // Adjust the final score or message as needed
+            printf("\nGame Over! Final Score: %d\n", body_len - 1); // Adjust the final score for message as needed
             printf("===== GAME OVER! You collided with yourself! =====\n");
             printf("Snake length: %d\n", body_len);
 
             return true; // Head has collided with body
         }
     }
-    return false;
+    return false; // No collision
 }
 
 bool checkWinCon() { // Checks if you have won the game
     if (body_len == row * col) { // Snake covers the whole map
 
-        printf("\nYou Win! Final Score: %d\n", body_len - 1); // Adjust the final score or message as needed
+        printf("\nYou Win! Final Score: %d\n", body_len - 1); // Adjust the final score for message as needed
         printf("===== YOU WIN! You became the biggest snake! =====\n");
         printf("Snake length: %d\n", body_len);
 
         return true; // You won the game
     }
-    return false; // You have not won yes
+    return false; // You have not won yet
 }
 
 void foodLogic() { // The logic that places the food while ensuring it does not get placed in anything else and what happens when eaten
@@ -304,41 +311,39 @@ void foodLogic() { // The logic that places the food while ensuring it does not 
         free(new_segment);
         
         placeFood(); // Places a new food item
-
     }
 }
 
 bool placeFood() { // Code that places the food on the map
+
     bool valid = false;
+
     while (!valid) {
+
         int* rand_food = random_pos();
         valid = true;
 
-        for (int i = 0; i < body_len; i++) {
+        for (int i = 0; i < body_len; i++) { // Loops through the body segments to ensure the food is not placed on the snake
             if (snake_body[i][0] == rand_food[0] && snake_body[i][1] == rand_food[1]) {
-                valid = false;
+                valid = false; // Food is on the snake
                 break;
             }
         }
-
-        if (valid) {
+        if (valid) { // Sets the food position to the approved random one
             food_pos[0] = rand_food[0];
             food_pos[1] = rand_food[1];
         }
-
         free(rand_food);
     }
-    return valid;
+    return valid; // Allowing a state change if required
 }
 
 void initDisplay() {
-    AddGameObjects();
-    system("cls");
-    printArray();
-    reset_map();
+    AddGameObjects(); // Adds snake body and food to array for print
+    system("cls"); // Clears the screen
+    printArray(); // Function that prints the array out in the console
+    reset_map(); // Removes all previous display elements for the snake and food (*Uniplemented food may not be needed since it dosent move)
 }
-
-void AddGameObjects() { // Adds snake body and food to array for print
 
 game_map[food_pos[0]][food_pos[1]] = '*'; // The food
     for (int i = body_len - 1; i > -1; i--) {
@@ -354,52 +359,62 @@ game_map[food_pos[0]][food_pos[1]] = '*'; // The food
 }
 
 void printArray() { // Function that prints the array out in the console
-    for (int i = 0; i < row + 2; i++) { // Loops through the rows
+    // Prints one whole row at a time to avoid "flicker" caused by delays in the computers processes
+    char* lineBuffer = (char*)calloc((col + 1), sizeof(char)); // Buffer for the line (col + 1 for the terminator)
+    char headFootLine[col + 1]; // Buffer for the header and footer lines (col + 1 for the terminator)
 
-        char lineBuffer[col + 1]; // It is col + 3 to allow for the borders
-
-        if (i == 0 || i == row + 1) { // Only head and foot
-            for (int j = 0; j < col; j++) { // Loops through the columns
-                lineBuffer[j] = '|'; // Adds data to buffer
-            }
-            printf("/%s/\n", lineBuffer); // Prints head and foot line
-        } else {
-            for (int j = 0; j < col; j++) { // Loops through the columns
-                lineBuffer[j] = game_map[i - 1][j]; // Takes data from the game map
-            }
-            printf("|%s|\n", lineBuffer); // Prints body line
-        }
+    for (int j = 0; j < col; j++) { // Loops through the columns
+        lineBuffer[j] = '='; // Adds data to buffer
     }
+    lineBuffer[col + 1] = '\0'; // Adds the terminator to the end
+
+    strcpy(headFootLine, lineBuffer); // Copies the head line to its buffer
+    printf("/%s\\\n", headFootLine); // Prints the head line
+
+    for (int i = 0; i < row; i++) { // Loops through the rows
+        for (int j = 0; j < col; j++) { // Loops through the columns
+            lineBuffer[j] = game_map[i][j]; // Takes data from the game map array
+        }
+        lineBuffer[col + 1] = '\0'; // Adds the terminator to the end
+        printf("|%s|\n", lineBuffer); // Prints body line
+    }
+    printf("\\%s/\n", headFootLine); // Prints the foot line
 }
 
 void reset_map() { // Removes all previous display elements for the snake and food
-    for (int i = 0; i < body_len; i++)
+    for (int i = 0; i < body_len; i++) // Loops through the body of the snake to clear each segment
     {
         game_map[snake_body[i][0]][snake_body[i][1]] = ' ';
     }
-    game_map[food_pos[0]][food_pos[1]] = ' ';
+    game_map[food_pos[0]][food_pos[1]] = ' '; // The food item is cleared here
 }
 
 int* random_pos() { // Function that returns a random position within the array
+
     int* pos = (int*)malloc(2 * sizeof(int)); // Allocates the memory used to store the [row, col] as 2 ints
+
     if (pos == NULL) {
         printf("Memory allocation failed!\n");
         exit(1); // Exit the program if allocation fails
     }
     pos[0] = rand() % (row); // Sets the vertical position
     pos[1] = rand() % (col); // Sets the horizontal position
+
     return pos; // Formatted as [row, col]
 }
 
 void append_element(int* append_element, int append_pos) { // Function that appends the value entered to the body array in a [row, col] format
+
     snake_body = realloc(snake_body, ++body_len * sizeof(*snake_body)); // Reallocates the memory to store the position of each body segment
+
     if (snake_body == NULL) {
         printf("Memory reallocation failed!\n");
         exit(1); // Exit the program if allocation fails
     }
- 
     snake_body[append_pos][0] = append_element[0]; // Sets the value of the first element
     snake_body[append_pos][1] = append_element[1]; // Sets the value of the second element
+
+    return;
 }
  
 void input() { // Records user input (Uniplemented as of yet)
@@ -409,7 +424,7 @@ void input() { // Records user input (Uniplemented as of yet)
         if (pressedKey == UP || pressedKey == LEFT || pressedKey == DOWN || pressedKey == RIGHT || pressedKey == PAUSE || pressedKey == QUIT) { // Checks if the entered key is assigned to a command
             switch(pressedKey) {
                 case QUIT:
-                    printf("\nYou quit?! Final Score: %d\n", body_len - 1); // Adjust the final score or message as needed
+                    printf("\nYou quit?! Final Score: %d\n", body_len - 1); // Adjust the final score for message as needed
                     printf("===== YOU QUIT! Why?! you were so close! =====\n");
                     printf("Snake length: %d\n", body_len);
                     game_run = false;
