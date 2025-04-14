@@ -345,7 +345,8 @@ void initDisplay() {
     reset_map(); // Removes all previous display elements for the snake and food (*Uniplemented food may not be needed since it dosent move)
 }
 
-game_map[food_pos[0]][food_pos[1]] = '*'; // The food
+void AddGameObjects() {
+    game_map[food_pos[0]][food_pos[1]] = '*'; // The food
     for (int i = body_len - 1; i > -1; i--) {
         switch (i) {
             case 0: // The head must be distict
