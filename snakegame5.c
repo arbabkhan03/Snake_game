@@ -143,6 +143,7 @@ int* random_pos() { // Function that returns a random position within the array
  
 void initGameLogic() {
     move_snake(move_snake_head(cmd));
+    game_run = !checkCollision();
     foodLogic();
 }
  
@@ -371,4 +372,16 @@ void menu() {
                 break;
         }
     }
+}
+
+bool checkCollision()
+{
+    for (int i = 1; i < body_len; i++) 
+    {
+        if (snake_body[0][0] == snake_body[i][0] &&
+            snake_body[0][1] == snake_body[i][1]) {
+            return true; // Head has collided with body
+        }
+    }
+    return false;
 }
