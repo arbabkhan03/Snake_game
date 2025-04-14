@@ -32,7 +32,7 @@ int body_len = START_SIZE - 1; // Length of the snake at the start and will stor
 int food_pos[2]; // Bufferss that hold the food position
 bool game_run = true; // Makes the game run and is the end condition for the main loop
 int cmd[2] = {PAUSE, RIGHT}; // Records user input (Only changes from proper input)
-int pauseSymbol[16][2]; // The stores the coordinates of the pause symbol components calculated based on map dimetions
+int pauseSymbol[16][2]; // Stores the coordinates of the pause symbol components calculated based on map dimetions
 int current_speed = DEFAULT_SPEED; // Sets the delay between code repetitions smaller value = faster
 bool speed_toggle = false; // false = DEFAULT_SPEED || true = MAX_SPEED
 
