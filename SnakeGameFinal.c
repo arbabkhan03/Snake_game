@@ -167,11 +167,11 @@ void menu() { // Function that prints and handles the menu logic
                 key = 0; // Resets the key otherwise it dosent work when you try to go back into menu 2
                 break;
             case '3':
-                printf("\nExiting game. Goodbye!");
+                printf("\n\nExiting game. Goodbye!");
                 Sleep(1000);
                 exit(0);
             default:
-                printf("\nInvalid choice. Try again.");
+                printf("\n\nInvalid choice. Try again.");
                 Sleep(250);
                 break;
         }
@@ -215,8 +215,9 @@ void initGameLogic() {
     move_snake(move_snake_head(cmd[0])); // Performs snake movement
     if (checkCollision() || checkWinCon()) { // Checks if a end contition is met
         game_run = false; // Ends the game
+    } else {
+        foodLogic(); // Logic code related to the food
     }
-    foodLogic(); // Logic code related to the food
 }
 
 void move_snake(int* new_head_pos) { // Code for body movement (including head) Body will follow the head
@@ -290,6 +291,15 @@ bool checkCollision() { // Checks if the snake has colided with itself
 
 bool checkWinCon() { // Checks if you have won the game
     if (body_len == row * col) { // Snake covers the whole map
+
+        for (int i = 0; i < row; i++) { // Loops through each row
+            for (int j = 0; j < col; j++) { // Loops through each column
+                game_map[i][j] = '#'; // Covers the map with the body
+            }
+        }
+        game_map[snake_body[0][0]][snake_body[0][1]] = '@'; // Adds the head
+        system("cls");
+        printArray(); // Prints the array
 
         printf("\nYou Win! Final Score: %d\n", body_len - 1); // Adjust the final score for message as needed
         printf("===== YOU WIN! You became the biggest snake! =====\n");
@@ -473,16 +483,18 @@ void input() { // Records user input (Uniplemented as of yet)
 }
 
 void statusPrint() { // Displays the pause icon
-    AddGameObjects();
-    for (int i = 0; i < 16; i++) {
-        game_map[pauseSymbol[i][0]][pauseSymbol[i][1]] = '+';
+    if (row >= 4 && col >= 5) { // Only prints the symbol if the map is large enough
+        AddGameObjects();
+        for (int i = 0; i < 16; i++) {
+            game_map[pauseSymbol[i][0]][pauseSymbol[i][1]] = '+';
+        }
+        system("cls");
+        printArray();
+        for (int i = 0; i < 16; i++) {
+            game_map[pauseSymbol[i][0]][pauseSymbol[i][1]] = ' ';
+        }
+        reset_map();
     }
-    system("cls");
-    printArray();
-    for (int i = 0; i < 16; i++) {
-        game_map[pauseSymbol[i][0]][pauseSymbol[i][1]] = ' ';
-    }
-    reset_map();
 }
 
 void resetGame() { // Resets all the important variables to their default values
