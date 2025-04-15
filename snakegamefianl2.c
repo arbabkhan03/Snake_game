@@ -1,11 +1,11 @@
 /*
 Authors: Jeremie Jones, Arbab Khan, SiChao Qi
 Date: 2025/04/14
-Note: Long video sorry about that. The code was desinged to run the least
-      amount of functions at any given time only triggering them when they
-      are needed. There is a document that you can use to read through the
-      transcripts of the video using Ctrl + F and there are many descritive
-      comments available.
+Note: Long 35 min video sorry about that. The code was desinged to run the
+      least amount of functions at any given time only triggering them when
+      they are needed. There is a document that you can use to read through
+      the transcripts of the video using Ctrl + F and there are many
+      descritive comments available.
 */
 
 // Included libraries
