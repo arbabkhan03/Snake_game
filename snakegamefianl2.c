@@ -112,7 +112,7 @@ repeat:
             printf("\n\nExiting game. Goodbye!");
             Sleep(1000);
             return 0; // Closes the window
-        default:
+        default: // To ensure the code dosent do anything with an invalid input
             goto repeat;
     }
 }
