@@ -7,7 +7,6 @@
 #include <stdbool.h>
 #include <conio.h> // Wont work on github
 
- 
 // Defining constants
 #define row 6
 #define col 24
