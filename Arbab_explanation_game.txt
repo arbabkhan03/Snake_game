@@ -1,0 +1,82 @@
+Hi Safat, apologies for the video being long, if my side of the presentation was inclear, these explanatinos shouold make it clear
+
+*Arbab code*/ /*improvement and optimization by jeremy*/
+// Embedded function definitions
+
+/*
+Explanation: void menu
+    So the void menu(), it has char chocie for user input, we are gonna use choice in the while loop and set it not equal to 1 (choice != '1')
+    So, program will run until user presses 1. after 1 is pressed the void menu get's cleared by system cls and exit's void menu and get's to the main fucntion with logic. 
+
+    okay case 2....Bunch of print statements, but before showing the statements system cls clears the menu and shows the case 2 statements.
+    Now the specific part of case 2 is the pronpt to adjust speed, the speed toggle can be toggled by the user, inside the inner loop of
+    the if statement the user will press f which toggles the speed statement when speed is TRUE it will show MAX_SPEED,
+    and when you want to revert back to DEFAULT_SPEED and tht will be FALSE,if you want exit case 2 adn the speed promt just press 'e'.
+    and to get ouf of the void menu you can press '3 ' to exit the whole program. 
+*/
+
+/*Arbab and optimized and updated by Jeremy*/
+
+/*
+Explanation: int* move_snake_head(int direction)
+    So, memory is allocated for the new head positon, if (new_head_pos == NULL) in this we are checking if memory allocation fails
+    int* new_head_pos = (int*)malloc(2 * sizeof(int) malloc returns a pointer to block of memory , if it fials it will retun NULL
+    and the print the following "Memory allocation failed!", at terminates program immediately.
+
+    Swithc case satement sort of like a menu, it will check current direction of snake movement & update the head with movement 
+
+    CASE UP:
+        we will move the head up decreasing by 1 index, bring back row to add so we are not out of bounds, and use modulus for it to get the array index.
+        Column doesn't change
+
+    CASE DOWN:
+        Column doesn't change
+        No out of bounds here since we moving down the array which increase array index, only thing is the modulus to wrap it up and bring it to right index.
+
+    CASE LEFT: 
+        ROW doesn't change.
+        uses the same logic as CASE UP. 
+    
+    CASE RIGHT:
+        ROW Doesn't change.
+        uses the same logic as CASE DOWN.
+*/
+
+/*Arbab code*/
+
+/*
+Expalin: bool checkCollision() 
+    for loop strts with i=1 casue of body segment and head segment starts i=0,
+    so we are comparing the body coordinates with the head head co-ordinates, which are in the if statemetns
+    snake_body[0][0] == snake_body[i][0] && snake_body[0][1] == snake_body[i][1]). 
+    if the head collides withe the body it will be true, if not it is false and it will keep looping
+
+*/
+
+/*Arbab code*/
+/*
+explanation: void foodLogic() 
+    This fucntion the snake should eat the food and grow
+    in the if staement we check if snake body is at same position as  food position we do this by comparing 
+    row and column.  snake_body[0][0] == food_pos[0] &&
+    snake_body[0][1] == food_pos[1]
+    int* new_segment = (int*)malloc(2 * sizeof(int));: this is used to allocate the memory for new segemtn
+        new_segment[0] = snake_body[body_len - 1][0];  // Row of the last segment
+        new_segment[1] = snake_body[body_len - 1][1];  // Column of the last segment
+    for the new segemnt on top, we are duplicating the tail and placing it and expanding the snake tail (new body part)
+    the adding part is done by append element which will place it at the end of the old tail or body part.
+    So, After we pass the data to the snake’s body (which copies or stores it), we don’t need new_segment anymore and
+     we free() the memory to prevent a memory leak.
+     new food is placed by the fucntion placefood
+*/
+
+/*Arbab code*/
+/*
+Explanatin: bool placeFood() 
+    valid starts as false, that means the food position is not valid yet. We’ll try to place the food in a valid spot on the array grid.
+    The function random_pos() is called to generate a random position on the array grid (row and column).
+    assume it's valid at first by setting valid = true. now we check if food and snake body have collided, 
+    if it has it will be non valid and it will break the loop
+    but if it's valid, if it becomes true food position becmoes true and food will pop up at another random location,
+     and then we will free the memory of rand_food to prevent any memory leak
+*/
