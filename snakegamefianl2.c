@@ -18,13 +18,13 @@ Note: Long 35 min video sorry about that. The code was desinged to run the
 #include <conio.h> // Wont work on github
 
 // Defining constants
-#define row 6
-#define col 24
-#define START_SIZE 1
+#define row 6 // Vertical dimention of the map
+#define col 24 // Horizontal dimention of the map
+#define START_SIZE 1 // Intial size of the snake
 
 // Speed settings (Smaller = Faster)
-#define DEFAULT_SPEED 200 // milliseconds
-#define MAX_SPEED 100 // milliseconds
+#define DEFAULT_SPEED 200 // Milliseconds
+#define MAX_SPEED 100 // Milliseconds
 
 // Key binds
 #define UP 'w' // Key to start the upwards animation
