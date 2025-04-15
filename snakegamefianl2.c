@@ -89,10 +89,15 @@ restart_game: // Restart the the game with the same settings if 'r' is pressed (
             }
         }
     }
+
     // After the loop ends, print the game over message
     printf("\nPress 'q' key to exit");
     printf("\nPress 'm' to go to main menu");
     printf("\nPress 'r' to restart game");
+
+    Sleep(250);
+
+repeat:
 
     switch(getch()) { // Reads user input for respective commands
         case 'm':
@@ -107,6 +112,8 @@ restart_game: // Restart the the game with the same settings if 'r' is pressed (
             printf("\n\nExiting game. Goodbye!");
             Sleep(1000);
             return 0; // Closes the window
+        default:
+            goto repeat;
     }
 }
 
