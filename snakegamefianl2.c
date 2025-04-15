@@ -1,8 +1,18 @@
+/*
+Authors: Jeremie Jones, Arbab Khan, SiChao Qi
+Date: 2025/04/14
+Note: Long video sorry about that. The code was desinged to run the least
+      amount of functions at any given time only triggering them when they
+      are needed. There is a document that you can use to read through the
+      transcripts of the video using Ctrl + F and there are many descritive
+      comments available.
+*/
+
 // Included libraries
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <windows.h>
+#include <windows.h> // Wont work on github
 #include <time.h>
 #include <stdbool.h>
 #include <conio.h> // Wont work on github
@@ -100,7 +110,7 @@ restart_game: // Restart the the game with the same settings if 'r' is pressed (
     }
 }
 
-/*Arbab code*/ /*improvement and optimization by jeremy*/
+/*Arbab code*/ /*improvement and optimization by jeremie*/
 // Embedded function definitions
 void menu() 
 { // Function that prints and handles the menu logic
@@ -261,10 +271,10 @@ void move_snake(int* new_head_pos) { // Code for body movement (including head) 
     }
 }
 
-/*Arbab and optimized and updated by Jeremy*/
+/*Arbab and optimized and updated by Jeremie*/
 int* move_snake_head(int direction) {
     // Allocate memory to store the new head position as [row, col]
-    //A 2 memory element array
+    // A 2 memory element array
     int* new_head_pos = (int*)malloc(2 * sizeof(int));
  
     //To check if memeory allocation failed
@@ -362,7 +372,7 @@ void foodLogic()
 
         //adds a new body or segment using append element function
         append_element(new_segment, body_len); // Add to end of snake
-        //free memory used bby new segment
+        //free memory used by new segment
         free(new_segment);
         
         //place a new food item on the grid
@@ -411,7 +421,7 @@ void initDisplay() {
     reset_map(); // Removes all previous display elements for the snake and food (*Uniplemented food may not be needed since it dosent move)
 }
 
-void AddGameObjects() {
+void AddGameObjects() { // Adds snake body and food to array for print
     game_map[food_pos[0]][food_pos[1]] = '*'; // The food
     for (int i = body_len - 1; i > -1; i--) {
         switch (i) {
